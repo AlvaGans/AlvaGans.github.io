@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SECURITY ALERT - SYSTEM COMPROMISE</title>
+  <title>SECURITY ALERT</title>
   <style>
     * {
       box-sizing: border-box;
@@ -97,6 +97,17 @@
       margin-top: 10px;
       font-style: italic;
     }
+
+    .exit-counter {
+      position: fixed;
+      bottom: 10px;
+      right: 10px;
+      color: #ff4444;
+      font-size: 12px;
+      background: rgba(0,0,0,0.7);
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
   </style>
 </head>
 <body>
@@ -114,9 +125,12 @@
     </div>
   </div>
 
+  <div class="exit-counter" id="exitCounter">Exit attempts: 0</div>
+
   <script>
     let timer = 30;
     let timerInterval;
+    let exitAttempts = 0;
 
     // Start timer countdown
     function startTimer() {
@@ -129,6 +143,12 @@
           document.getElementById('warning').textContent = 
             "CRITICAL: System permanently encrypted. Contact security team immediately.";
           document.getElementById('warning').style.color = '#ff0000';
+          
+          // Membuat lebih sulit untuk diklik
+          document.querySelectorAll('button, input').forEach(el => {
+            el.style.pointerEvents = 'none';
+            el.style.opacity = '0.5';
+          });
         }
       }, 1000);
     }
@@ -138,57 +158,99 @@
       const code = document.getElementById('codeInput').value;
       if(code === "12345") {
         clearInterval(timerInterval);
-        alert("System decrypted successfully. You may now close this page.");
         window.onbeforeunload = null;
+        document.body.innerHTML = `
+          <div style="display: flex; justify-content: center; align-items: center; height: 100vh; background: #000; color: #00ff00; font-family: monospace;">
+            <div style="text-align: center; padding: 30px; background: rgba(0,0,0,0.8); border: 2px solid #00ff00; border-radius: 10px;">
+              <h1>SYSTEM DECRYPTED SUCCESSFULLY</h1>
+              <p>You may now close this page safely</p>
+              <p style="font-size: 12px; color: #ffcc00; margin-top: 20px;">
+                This was a harmless prank - no actual system was compromised
+              </p>
+            </div>
+          </div>
+        `;
       } else {
+        exitAttempts++;
+        document.getElementById('exitCounter').textContent = `Exit attempts: ${exitAttempts}`;
         document.getElementById('warning').textContent = 
-          "INVALID CODE! System integrity compromised further.";
+          `INVALID CODE! Attempt ${exitAttempts}. System integrity compromised further.`;
         document.getElementById('codeInput').value = "";
+        document.getElementById('codeInput').style.animation = 'shake 0.5s';
+        setTimeout(() => {
+          document.getElementById('codeInput').style.animation = '';
+        }, 500);
       }
     }
 
-    // Prevent all escape methods
+    // Blokir semua cara keluar
     window.onbeforeunload = function(e) {
+      exitAttempts++;
+      document.getElementById('exitCounter').textContent = `Exit attempts: ${exitAttempts}`;
       e.preventDefault();
       e.returnValue = 'Warning: System security breach in progress. Closing this window may result in permanent data loss.';
+      return e.returnValue;
     };
 
-    // Disable right click
+    // Blokir klik kanan
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
+      exitAttempts++;
+      document.getElementById('exitCounter').textContent = `Exit attempts: ${exitAttempts}`;
     });
 
-    // Disable keyboard shortcuts
+    // Blokir shortcut keyboard
     document.addEventListener('keydown', function(e) {
-      // Block F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+U, etc.
-      if (e.key === 'F12' || 
-          (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-          (e.ctrlKey && e.shiftKey && e.key === 'C') ||
-          (e.ctrlKey && e.key === 'u') ||
-          (e.ctrlKey && e.key === 'r')) {
+      if (e.key === 'F12' || e.key === 'F5' || e.key === 'F4' || 
+          (e.ctrlKey && (e.key === 'r' || e.key === 'w' || e.key === 'n' || e.key === 't')) ||
+          (e.altKey && e.key === 'F4') ||
+          (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J'))) {
         e.preventDefault();
+        exitAttempts++;
+        document.getElementById('exitCounter').textContent = `Exit attempts: ${exitAttempts}`;
       }
     });
+
+    // Mencegah zoom dan scroll
+    document.addEventListener('wheel', function(e) {
+      if (e.ctrlKey) e.preventDefault();
+    }, { passive: false });
+
+    document.addEventListener('touchmove', function(e) {
+      if (e.scale !== 1) e.preventDefault();
+    }, { passive: false });
 
     // Request fullscreen
     function requestFullscreen() {
       const elem = document.documentElement;
       if (elem.requestFullscreen) {
-        elem.requestFullscreen();
-      } else if (elem.mozRequestFullScreen) { // Firefox
-        elem.mozRequestFullScreen();
-      } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
-        elem.webkitRequestFullscreen();
-      } else if (elem.msRequestFullscreen) { // IE/Edge
-        elem.msRequestFullscreen();
+        elem.requestFullscreen().catch(err => {
+          console.log('Fullscreen error:', err);
+        });
       }
     }
+
+    // Animasi shake untuk input
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes shake {
+        0%, 100% { transform: translateX(0); }
+        25% { transform: translateX(-5px); }
+        75% { transform: translateX(5px); }
+      }
+    `;
+    document.head.appendChild(style);
 
     // Initialize
     window.onload = function() {
       requestFullscreen();
       startTimer();
       document.getElementById('codeInput').focus();
+      
+      // Focus terus menerus pada input
+      setInterval(() => {
+        document.getElementById('codeInput').focus();
+      }, 1000);
     };
   </script>
 </body>
