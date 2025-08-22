@@ -2,81 +2,361 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hackeds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>SECURITY ALERT - SYSTEM COMPROMISED</title>
   <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
     body {
       margin: 0;
       height: 100vh;
-      background: #8b0000;
-      color: #fff;
-      font-family: monospace;
+      background: #000;
+      color: #ff4444;
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      touch-action: none;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    .matrix-effect {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(45deg, #8b0000, #660000, #ff0000);
+      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
+      padding: 20px;
     }
-    .box {
-      background: #660000;
+
+    .hacked-container {
+      background: rgba(0, 0, 0, 0.8);
       padding: 30px;
-      border: 3px solid #900;
-      box-shadow: 0 0 40px #000 inset;
+      border: 3px solid #ff4444;
+      box-shadow: 0 0 40px #ff0000 inset, 0 0 20px #ff0000;
       text-align: center;
-      width: 500px;
+      width: 90%;
+      max-width: 500px;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
     }
+
+    .scan-line {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #00ff00, transparent);
+      animation: scan 2s linear infinite;
+    }
+
+    @keyframes scan {
+      0% { top: 0; }
+      100% { top: 100%; }
+    }
+
     h1 {
       color: #ff4444;
       font-size: 24px;
       margin-bottom: 20px;
+      text-shadow: 0 0 10px #ff0000;
+      animation: glow 1s ease-in-out infinite alternate;
     }
-    .lock {
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #ff0000; }
+      to { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff4444; }
+    }
+
+    .lock-icon {
       font-size: 80px;
       margin: 20px 0;
+      animation: shake 0.5s ease-in-out infinite alternate;
     }
-    .btn {
+
+    @keyframes shake {
+      from { transform: translateX(-2px); }
+      to { transform: translateX(2px); }
+    }
+
+    .system-info {
+      text-align: left;
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      background: rgba(102, 0, 0, 0.3);
+      padding: 15px;
+      border-radius: 5px;
+      border: 1px solid #ff4444;
+    }
+
+    .info-line {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 5px;
+    }
+
+    .countdown {
+      font-size: 18px;
+      color: #00ff00;
+      margin: 15px 0;
+      font-weight: bold;
+    }
+
+    .code-input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background: #330000;
+      border: 2px solid #ff4444;
+      color: #00ff00;
+      font-family: monospace;
+      text-align: center;
+      font-size: 18px;
+      border-radius: 5px;
+    }
+
+    .submit-btn {
+      width: 100%;
       background: #cc0000;
       border: none;
       color: #fff;
-      padding: 12px 24px;
-      margin-top: 20px;
-      font-size: 18px;
+      padding: 15px;
+      margin-top: 15px;
+      font-size: 16px;
       cursor: pointer;
+      border-radius: 5px;
+      font-weight: bold;
+      transition: background 0.3s;
     }
-    .info {
-      text-align: left;
+
+    .submit-btn:hover {
+      background: #ff0000;
+    }
+
+    .warning {
+      color: #ffcc00;
+      font-size: 12px;
       margin-top: 10px;
-      font-size: 14px;
+      font-style: italic;
+    }
+
+    .exit-attempts {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: #ff4444;
+      font-size: 12px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 5px 10px;
+      border-radius: 3px;
+    }
+
+    @media (max-width: 768px) {
+      .hacked-container {
+        width: 95%;
+        padding: 20px;
+      }
+      
+      h1 {
+        font-size: 20px;
+      }
+      
+      .lock-icon {
+        font-size: 60px;
+      }
+      
+      .system-info {
+        font-size: 12px;
+      }
     }
   </style>
+</head>
+<body>
+  <div class="matrix-effect" id="matrix"></div>
+  
+  <div class="overlay">
+    <div class="hacked-container">
+      <div class="scan-line"></div>
+      <h1>⚠️ SYSTEM SECURITY BREACH DETECTED ⚠️</h1>
+      <div class="lock-icon">🔒</div>
+      
+      <div class="system-info">
+        <div class="info-line"><span>IP ADDRESS:</span> <span>192.168.1.100</span></div>
+        <div class="info-line"><span>HOSTNAME:</span> <span>WIN-ABCDEFG123</span></div>
+        <div class="info-line"><span>STATUS:</span> <span style="color: #ff4444;">COMPROMISED</span></div>
+        <div class="info-line"><span>INJECTION:</span> <span style="color: #ff4444;">ACTIVE</span></div>
+        <div class="info-line"><span>ENCRYPTION:</span> <span style="color: #00ff00;">87% COMPLETE</span></div>
+      </div>
+
+      <div class="countdown" id="countdown">TIME REMAINING: <span id="timer">600</span>s</div>
+      
+      <input type="password" class="code-input" id="codeInput" placeholder="ENTER DECRYPTION CODE" autocomplete="off">
+      <button class="submit-btn" onclick="checkCode()">DECRYPT SYSTEM</button>
+      
+      <div class="warning" id="warning">
+        WARNING: System shutdown attempts detected. All data will be permanently encrypted.
+      </div>
+    </div>
+  </div>
+
+  <div class="exit-attempts" id="exitAttempts">Exit attempts blocked: 0</div>
+
   <script>
-    function unlock() {
-      const code = prompt("Enter the unlock code:");
-      if (code === "12345") {
-        alert("Unlocked! You can now close the page.");
-        // Optionally, you can redirect to another page or perform another action here
+    let exitAttempts = 0;
+    let timer = 600;
+    let timerInterval;
+    let matrixInterval;
+
+    // Matrix effect
+    function createMatrix() {
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      const container = document.getElementById('matrix');
+      container.appendChild(canvas);
+      
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      
+      const chars = "01";
+      const fontSize = 14;
+      const columns = canvas.width / fontSize;
+      const drops = [];
+      
+      for(let i = 0; i < columns; i++) {
+        drops[i] = 1;
+      }
+      
+      function draw() {
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = '#0F0';
+        ctx.font = fontSize + 'px monospace';
+        
+        for(let i = 0; i < drops.length; i++) {
+          const text = chars[Math.floor(Math.random() * chars.length)];
+          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+          
+          if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+            drops[i] = 0;
+          }
+          
+          drops[i]++;
+        }
+      }
+      
+      matrixInterval = setInterval(draw, 33);
+    }
+
+    // Timer countdown
+    function startTimer() {
+      timerInterval = setInterval(() => {
+        timer--;
+        document.getElementById('timer').textContent = timer;
+        
+        if(timer <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('warning').textContent = 
+            "CRITICAL: System permanently encrypted. Contact security team immediately.";
+          document.getElementById('warning').style.color = '#ff0000';
+        }
+      }, 1000);
+    }
+
+    // Check unlock code
+    function checkCode() {
+      const code = document.getElementById('codeInput').value;
+      if(code === "12345") {
+        clearInterval(timerInterval);
+        clearInterval(matrixInterval);
+        alert("System decrypted successfully. You may now close this page.");
+        window.onbeforeunload = null;
       } else {
-        alert("Incorrect code! You cannot close this page.");
-        // Continuously prompt the user until they enter the correct code
-        unlock();
+        document.getElementById('warning').textContent = 
+          "INVALID CODE! System integrity compromised further.";
+        document.getElementById('codeInput').value = "";
+        document.getElementById('codeInput').style.borderColor = '#ff0000';
+        setTimeout(() => {
+          document.getElementById('codeInput').style.borderColor = '#ff4444';
+        }, 1000);
       }
     }
 
-    // Prevent closing the tab
-    window.onbeforeunload = function() {
-      return "You cannot close this tab without entering the correct code!";
+    // Prevent all escape methods
+    window.onbeforeunload = function(e) {
+      exitAttempts++;
+      document.getElementById('exitAttempts').textContent = `Exit attempts blocked: ${exitAttempts}`;
+      
+      e.preventDefault();
+      e.returnValue = 'Warning: System security breach in progress. Closing this window may result in permanent data loss.';
+      return e.returnValue;
+    };
+
+    // Disable right click
+    document.addEventListener('contextmenu', function(e) {
+      e.preventDefault();
+      exitAttempts++;
+      document.getElementById('exitAttempts').textContent = `Exit attempts blocked: ${exitAttempts}`;
+      return false;
+    });
+
+    // Disable keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+      // Block F12, Ctrl+Shift+I, Ctrl+Shift+C, Ctrl+U, etc.
+      if (e.key === 'F12' || 
+          (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+          (e.ctrlKey && e.shiftKey && e.key === 'C') ||
+          (e.ctrlKey && e.key === 'u') ||
+          (e.ctrlKey && e.key === 'r')) {
+        e.preventDefault();
+        exitAttempts++;
+        document.getElementById('exitAttempts').textContent = `Exit attempts blocked: ${exitAttempts}`;
+      }
+    });
+
+    // Prevent zoom and pinch on mobile
+    document.addEventListener('touchmove', function(e) {
+      if(e.scale !== 1) {
+        e.preventDefault();
+      }
+    }, { passive: false });
+
+    // Initialize
+    window.onload = function() {
+      createMatrix();
+      startTimer();
+      document.getElementById('codeInput').focus();
     };
   </script>
-</head>
-<body>
-  <div class="box">
-    <h1>YOUR COMPUTER HAS BEEN HACKED</h1>
-    <div class="lock">🔒</div>
-    <div class="info">
-      IP ADDRESS : 192.168.1.100 <br>
-      HOSTNAME   : WIN-ABCDEFG123 <br>
-      INJECTED   : TRUE <br>
-      REALTIME   : (412s / 1200s) <br>
-    </div>
-    <button class="btn" onclick="unlock()">UNLOCK</button>
-  </div>
 </body>
 </html>
+
