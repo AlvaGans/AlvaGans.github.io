@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SECURITY ALERT - SYSTEM COMPROMISED</title>
+  <title>SECURITY ALERT - SYSTEM COMPROMISE</title>
   <style>
     * {
       box-sizing: border-box;
@@ -28,30 +28,12 @@
       user-select: none;
     }
 
-    .matrix-effect {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: -1;
-      opacity: 0.3;
-      pointer-events: none;
-    }
-
     .overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(45deg, #8b0000, #660000, #ff0000);
-      z-index: 1000;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-direction: column;
-      padding: 20px;
+      height: 100%;
     }
 
     .hacked-container {
@@ -63,64 +45,12 @@
       width: 90%;
       max-width: 500px;
       border-radius: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .scan-line {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 2px;
-      background: linear-gradient(90deg, transparent, #00ff00, transparent);
-      animation: scan 2s linear infinite;
-    }
-
-    @keyframes scan {
-      0% { top: 0; }
-      100% { top: 100%; }
     }
 
     h1 {
       color: #ff4444;
       font-size: 24px;
       margin-bottom: 20px;
-      text-shadow: 0 0 10px #ff0000;
-      animation: glow 1s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-      from { text-shadow: 0 0 10px #ff0000; }
-      to { text-shadow: 0 0 20px #ff0000, 0 0 30px #ff4444; }
-    }
-
-    .lock-icon {
-      font-size: 80px;
-      margin: 20px 0;
-      animation: shake 0.5s ease-in-out infinite alternate;
-    }
-
-    @keyframes shake {
-      from { transform: translateX(-2px); }
-      to { transform: translateX(2px); }
-    }
-
-    .system-info {
-      text-align: left;
-      margin-top: 20px;
-      font-size: 14px;
-      line-height: 1.6;
-      background: rgba(102, 0, 0, 0.3);
-      padding: 15px;
-      border-radius: 5px;
-      border: 1px solid #ff4444;
-    }
-
-    .info-line {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 5px;
     }
 
     .countdown {
@@ -167,57 +97,13 @@
       margin-top: 10px;
       font-style: italic;
     }
-
-    .exit-attempts {
-      position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: #ff4444;
-      font-size: 12px;
-      background: rgba(0, 0, 0, 0.7);
-      padding: 5px 10px;
-      border-radius: 3px;
-    }
-
-    @media (max-width: 768px) {
-      .hacked-container {
-        width: 95%;
-        padding: 20px;
-      }
-      
-      h1 {
-        font-size: 20px;
-      }
-      
-      .lock-icon {
-        font-size: 60px;
-      }
-      
-      .system-info {
-        font-size: 12px;
-      }
-    }
   </style>
 </head>
 <body>
-  <div class="matrix-effect" id="matrix"></div>
-  
   <div class="overlay">
     <div class="hacked-container">
-      <div class="scan-line"></div>
       <h1>⚠️ SYSTEM SECURITY BREACH DETECTED ⚠️</h1>
-      <div class="lock-icon">🔒</div>
-      
-      <div class="system-info">
-        <div class="info-line"><span>IP ADDRESS:</span> <span>192.168.1.100</span></div>
-        <div class="info-line"><span>HOSTNAME:</span> <span>WIN-ABCDEFG123</span></div>
-        <div class="info-line"><span>STATUS:</span> <span style="color: #ff4444;">COMPROMISED</span></div>
-        <div class="info-line"><span>INJECTION:</span> <span style="color: #ff4444;">ACTIVE</span></div>
-        <div class="info-line"><span>ENCRYPTION:</span> <span style="color: #00ff00;">87% COMPLETE</span></div>
-      </div>
-
-      <div class="countdown" id="countdown">TIME REMAINING: <span id="timer">600</span>s</div>
+      <div class="countdown" id="countdown">TIME REMAINING: <span id="timer">30</span>s</div>
       
       <input type="password" class="code-input" id="codeInput" placeholder="ENTER DECRYPTION CODE" autocomplete="off">
       <button class="submit-btn" onclick="checkCode()">DECRYPT SYSTEM</button>
@@ -228,56 +114,11 @@
     </div>
   </div>
 
-  <div class="exit-attempts" id="exitAttempts">Exit attempts blocked: 0</div>
-
   <script>
-    let exitAttempts = 0;
-    let timer = 600;
+    let timer = 30;
     let timerInterval;
-    let matrixInterval;
 
-    // Matrix effect
-    function createMatrix() {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      const container = document.getElementById('matrix');
-      container.appendChild(canvas);
-      
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      
-      const chars = "01";
-      const fontSize = 14;
-      const columns = canvas.width / fontSize;
-      const drops = [];
-      
-      for(let i = 0; i < columns; i++) {
-        drops[i] = 1;
-      }
-      
-      function draw() {
-        ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        ctx.fillStyle = '#0F0';
-        ctx.font = fontSize + 'px monospace';
-        
-        for(let i = 0; i < drops.length; i++) {
-          const text = chars[Math.floor(Math.random() * chars.length)];
-          ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-          
-          if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-            drops[i] = 0;
-          }
-          
-          drops[i]++;
-        }
-      }
-      
-      matrixInterval = setInterval(draw, 33);
-    }
-
-    // Timer countdown
+    // Start timer countdown
     function startTimer() {
       timerInterval = setInterval(() => {
         timer--;
@@ -297,36 +138,24 @@
       const code = document.getElementById('codeInput').value;
       if(code === "12345") {
         clearInterval(timerInterval);
-        clearInterval(matrixInterval);
         alert("System decrypted successfully. You may now close this page.");
         window.onbeforeunload = null;
       } else {
         document.getElementById('warning').textContent = 
           "INVALID CODE! System integrity compromised further.";
         document.getElementById('codeInput').value = "";
-        document.getElementById('codeInput').style.borderColor = '#ff0000';
-        setTimeout(() => {
-          document.getElementById('codeInput').style.borderColor = '#ff4444';
-        }, 1000);
       }
     }
 
     // Prevent all escape methods
     window.onbeforeunload = function(e) {
-      exitAttempts++;
-      document.getElementById('exitAttempts').textContent = `Exit attempts blocked: ${exitAttempts}`;
-      
       e.preventDefault();
       e.returnValue = 'Warning: System security breach in progress. Closing this window may result in permanent data loss.';
-      return e.returnValue;
     };
 
     // Disable right click
     document.addEventListener('contextmenu', function(e) {
       e.preventDefault();
-      exitAttempts++;
-      document.getElementById('exitAttempts').textContent = `Exit attempts blocked: ${exitAttempts}`;
-      return false;
     });
 
     // Disable keyboard shortcuts
@@ -338,25 +167,29 @@
           (e.ctrlKey && e.key === 'u') ||
           (e.ctrlKey && e.key === 'r')) {
         e.preventDefault();
-        exitAttempts++;
-        document.getElementById('exitAttempts').textContent = `Exit attempts blocked: ${exitAttempts}`;
       }
     });
 
-    // Prevent zoom and pinch on mobile
-    document.addEventListener('touchmove', function(e) {
-      if(e.scale !== 1) {
-        e.preventDefault();
+    // Request fullscreen
+    function requestFullscreen() {
+      const elem = document.documentElement;
+      if (elem.requestFullscreen) {
+        elem.requestFullscreen();
+      } else if (elem.mozRequestFullScreen) { // Firefox
+        elem.mozRequestFullScreen();
+      } else if (elem.webkitRequestFullscreen) { // Chrome, Safari and Opera
+        elem.webkitRequestFullscreen();
+      } else if (elem.msRequestFullscreen) { // IE/Edge
+        elem.msRequestFullscreen();
       }
-    }, { passive: false });
+    }
 
     // Initialize
     window.onload = function() {
-      createMatrix();
+      requestFullscreen();
       startTimer();
       document.getElementById('codeInput').focus();
     };
   </script>
 </body>
 </html>
-
