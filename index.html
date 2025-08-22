@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Hacked</title>
+  <title>Hackeds</title>
   <style>
     body {
       margin: 0;
@@ -52,11 +52,18 @@
       const code = prompt("Enter the unlock code:");
       if (code === "12345") {
         alert("Unlocked! You can now close the page.");
-        window.close(); // This will attempt to close the window
+        // Optionally, you can redirect to another page or perform another action here
       } else {
         alert("Incorrect code! You cannot close this page.");
+        // Continuously prompt the user until they enter the correct code
+        unlock();
       }
     }
+
+    // Prevent closing the tab
+    window.onbeforeunload = function() {
+      return "You cannot close this tab without entering the correct code!";
+    };
   </script>
 </head>
 <body>
